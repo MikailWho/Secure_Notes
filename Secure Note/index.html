@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+    <script defer src="app.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+    <title>SECYOUR NOTES</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #000000;
+            color: #97f564;
+            margin: 0;
+            overflow: hidden; 
+        }
+
+        header {
+            background-color: #111111;
+            background-image: linear-gradient(32deg,rgba(8, 8, 8, 0.74) 30px,transparent);
+            background-size: 60px 60px;
+            background-position: -5px -5px;
+            padding: 10px 20px;
+            font-size: 24px;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            height: 50px; 
+        }
+
+        header h2 {
+            margin: 0;
+        }
+
+        nav {
+            float: left;
+            width: 19%; 
+            height: calc(100vh - 100px);
+            background-color: #111111;
+            background-image: linear-gradient(32deg,rgba(8, 8, 8, 0.74) 30px,transparent);
+            background-size: 60px 60px;
+            background-position: -5px -5px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        nav .header {
+            margin-bottom: 20px;
+        }
+
+        nav .header button {
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #181a1b;
+            color: white;
+            border: 0.1px;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        nav .header button:hover {
+            background-color: #A1DD70;
+            color: black;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            padding: 10px;
+            margin-bottom: 5px;
+            background-color: #181a1b;
+            color: white;
+            cursor: pointer;
+            border: 0.5px solid #555;
+            border-radius: 10px;
+        }
+
+        nav ul li:hover {
+            background-color: #555;
+        }
+
+        article {
+            float: left;
+            padding: 20px;
+            width: 81%;
+            background-color: #4e4c4c;
+            background-image: radial-gradient(rgba(15, 15, 15, 0.171) 2px, transparent 0);
+            background-size: 30px 30px;
+            background-position: -5px -5px;
+            height: calc(100vh - 100px);
+            color: black;
+            overflow-y: auto;
+            border-radius: 10px;
+        }
+
+        .note-display {
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            border: black;
+            border: 2.8px solid #000000;
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .note-display h2 {
+            margin: 0 0 10px 0;
+        }
+
+        .note-display p {
+            word-break: break-word;
+            white-space: pre-wrap;
+        }
+
+        .note-display button {
+            display: inline;
+            width: 25%;
+            margin-bottom: 20px;
+            padding: 10px;
+            color: black;
+            background-color: #A1DD70;
+            border: 2.8px solid #000000;
+            border-radius: 10px;
+            text-align: center;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+        }
+
+        .note-display button:hover{
+            background-color: #A1DD70;
+            color: white;
+        }
+
+        section::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+
+        form input {
+            display: block;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 5px solid #000000;
+            border-radius: 10px;
+            text-align: left;
+        }
+        form textarea {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 5px solid #000000;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        form button {
+            display: flex;
+            width: 18.5%;
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 2.8px solid #000000;
+            border-radius: 10px;
+        }
+
+        form button {
+            background-color: #A1DD70;
+            color: black;
+            cursor: pointer;
+            margin-top: 58px;
+            font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+            text-align: center;
+        }
+
+        form button:hover {
+            background-color: #A1DD70;
+            color: white;
+        }
+
+        textarea {
+            height: 250px;
+            background-color: #fff;
+            color: black;
+        }
+
+        .encryption-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .encryption-controls button {
+            width: auto;
+            margin-top: 0;
+        }
+
+        .toggle-key-container {
+            position: relative;
+            width: 25%;
+        }
+
+        .toggle-key-container input {
+            padding-right: 40px;
+            width: 100%;
+        }
+
+        .toggle-key-icon {
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+
+        footer {
+            background-color: #111111;
+            background-image: linear-gradient(32deg,rgba(8, 8, 8, 0.74) 30px,transparent);
+            background-size: 60px 60px;
+            background-position: -5px -5px;
+            padding: 10px 20px;
+            text-align: center;
+            color: white;
+            height: 50px; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h2>SECYOUR NOTES</h2>
+</header>
+
+<section>
+    <nav>
+        <div class="header">
+            <button id="new-note">New Note</button>
+        </div>
+        <ul id="notes-sidebar">
+            <!-- Notes will be added here dynamically -->
+        </ul>
+    </nav>
+  
+    <article>
+        <form id="note-form" style="display:none;">
+            <input type="text" id="note-title" placeholder="Title" required>
+            <textarea id="note-content" placeholder="Content" required></textarea>
+            <div class="encryption-controls">
+                <button type="button" class="generate-key">Generate Key</button>
+                <div class="toggle-key-container">
+                    <input type="password" id="encryption-key" placeholder="Enter Encryption Key" required>
+                    <i class="far fa-eye toggle-key-icon" id="toggle-key-visibility"></i>
+                </div>
+                <button type="button" id="set-key">Set Key</button>
+                <button type="submit" style="margin-left: auto;">Save Note</button>
+            </div>
+        </form>
+        <div class="note-display" id="note-display" style="display:none;">
+            <!-- Selected note will be displayed here -->
+            <h2 id="display-title"></h2>
+            <p id="encrypted-content"></p>
+            <div class="encryption-controls">
+                <input type="password" id="display-decryption-key" placeholder="Enter Decryption Key">
+                <button type="button" onclick="decryptNoteContent()">Decrypt</button>
+            </div>
+            <button onclick="editNoteContent()">Edit</button>
+            <button onclick="deleteNoteContent()">Delete</button>
+        </div>
+    </article>
+</section>
+
+<footer>
+    <p>Remember to save your encryption key safely, just don't put it on this device!</p>
+</footer>
+
+</body>
+</html>
